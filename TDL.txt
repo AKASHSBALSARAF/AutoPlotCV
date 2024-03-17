@@ -1,0 +1,3 @@
+SobelX, SobelY, subtract the intersection of both the images to get the grid lines only.
+
+https://stackoverflow.com/questions/58383477/how-to-create-a-python-convolution-kernel

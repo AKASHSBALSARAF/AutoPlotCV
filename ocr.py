@@ -44,4 +44,4 @@ def extractLabels(imgfile):
 
 #testing 
 
-print(extractLabels("test.png"))
+print(extractLabels("output/graph4.png"))
