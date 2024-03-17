@@ -38,10 +38,10 @@ def preprocess(imgfile, noise_removal):
         return bimg
 
 def extractLabels(imgfile):
-    img = preprocess(imgfile, True)
+    img = preprocess(imgfile, False)
     res = pytesseract.image_to_string(img)
     return res
 
 #testing 
 
-print(extractLabels("output/graph4.png"))
+print(extractLabels("test.png"))
