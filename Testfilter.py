@@ -11,8 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-load = cv2.imread('testImages/cropped.png')
-loadcopy = cv2.imread('testImages/cropped.png')
+load = cv2.imread('testImages/test2.png')
+loadcopy = cv2.imread('testImages/test2.png')
 
 down_width = 720
 down_height = 720
@@ -21,51 +21,71 @@ image = cv2.resize(load, down_points, interpolation= cv2.INTER_LINEAR)
 imagecopy = cv2.resize(loadcopy, down_points, interpolation= cv2.INTER_LINEAR)
 
 gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-
-gray = np.float32(gray)
-dst = cv2.cornerHarris(gray,2,3,0.04)
- 
-#result is dilated for marking the corners, not important
-dst = cv2.dilate(dst,None)
+dst = cv2.Canny(gray,400,500)
  
 # Threshold for an optimal value, it may vary depending on the image.
 image[dst>0.012*dst.max()]=[255,255,255]
 
-#Till here, the code marks all the corners with a white 4 point box.
-
 offset = cv2.cvtColor(image-imagecopy, cv2.COLOR_BGR2GRAY)
-#Here, the code finds the difference between the image and the corner added image, so it gives the corners only
+'''cv2.imshow('Offset',offset)
+cv2.waitKey()'''
 
-is_column_zero = np.all(offset == 0, axis=0)
-print(is_column_zero)
 column_sum=[]
 for i in range(down_height):
     column_index = i
     column_sum.append(np.sum(offset[:, column_index]))
     i+=1
+print(column_sum)
 print(max(column_sum))
-lvline_index =column_sum.index(max(column_sum))+1
+lvline_index =column_sum.index(max(column_sum))
 
-is_row_zero = np.all(offset == 0, axis=1)
-print(is_row_zero)
+loopline2_index=lvline_index
+while abs(loopline2_index-lvline_index)<10:
+   column_sum.pop(loopline2_index)
+   loopline2_index = column_sum.index(max(column_sum))
+columntestline_index = loopline2_index
+
+if columntestline_index < lvline_index:
+    vline_index = columntestline_index
+else:
+    vline_index=columntestline_index+1
+
 row_sum=[]
 for i in range(down_width):
     row_index = i
     row_sum.append(np.sum(offset[row_index,:]))
     i+=1
-print(max(row_sum))
-bhline_index =row_sum.index(max(row_sum))+1
+bhline_index =row_sum.index(max(row_sum))
 
-nz=cv2.findNonZero(offset)
+loopline_index=bhline_index
+while abs(loopline_index-bhline_index)<10:
+   row_sum.pop(loopline_index)
+   loopline_index = row_sum.index(max(row_sum))
+rowtestline_index = loopline_index
+
+if rowtestline_index < bhline_index:
+    hline_index = rowtestline_index
+else:
+    hline_index=rowtestline_index+1
+
+
 a = lvline_index
-b = nz[:,0,1].min()
-c = nz[:,0,0].max()
+b = hline_index  # nz[:,0,1].min()
+c = vline_index #nz[:,0,0].max()
 d = bhline_index
 
-offset[b,a:c] =120
-offset[b:d,a] =120
-offset[b:d,c] =120
-offset[d,a:c] =120
-
+offset[b,a:c] =128
+offset[b:d,a] =128
+offset[b:d,c] =128
+offset[d,a:c] =128
 cv2.imshow('Offset', offset)
 cv2.waitKey()
+
+imagecopy[b,a:c] =(0,255,0)
+imagecopy[b:d,a] =(0,255,0)
+imagecopy[b:d,c] =(0,255,0)
+imagecopy[d,a:c] =(0,255,0)
+
+cv2.imshow('Image',imagecopy)
+cv2.waitKey()
+
