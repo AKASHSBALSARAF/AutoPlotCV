@@ -11,8 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-load = cv2.imread('testImages/Q5OG.jpg')
-loadcopy = cv2.imread('testImages/Q5OG.jpg')
+load = cv2.imread('testImages/cropped.png')
+loadcopy = cv2.imread('testImages/cropped.png')
 
 down_width = 720
 down_height = 720
@@ -34,18 +34,33 @@ image[dst>0.012*dst.max()]=[255,255,255]
 #Till here, the code marks all the corners with a white 4 point box.
 
 offset = cv2.cvtColor(image-imagecopy, cv2.COLOR_BGR2GRAY)
-
-
 #Here, the code finds the difference between the image and the corner added image, so it gives the corners only
-nz=cv2.findNonZero(offset)
-nzn = nz[0:18]
-b = np.reshape(nzn,(6,6))
-print(nzn)
 
-a = nz[:,0,0].min()
+is_column_zero = np.all(offset == 0, axis=0)
+print(is_column_zero)
+column_sum=[]
+for i in range(down_height):
+    column_index = i
+    column_sum.append(np.sum(offset[:, column_index]))
+    i+=1
+print(max(column_sum))
+lvline_index =column_sum.index(max(column_sum))+1
+
+is_row_zero = np.all(offset == 0, axis=1)
+print(is_row_zero)
+row_sum=[]
+for i in range(down_width):
+    row_index = i
+    row_sum.append(np.sum(offset[row_index,:]))
+    i+=1
+print(max(row_sum))
+bhline_index =row_sum.index(max(row_sum))+1
+
+nz=cv2.findNonZero(offset)
+a = lvline_index
 b = nz[:,0,1].min()
 c = nz[:,0,0].max()
-d = nz[:,0,1].max()
+d = bhline_index
 
 offset[b,a:c] =120
 offset[b:d,a] =120
