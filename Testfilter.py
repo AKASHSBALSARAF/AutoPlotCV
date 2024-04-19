@@ -6,13 +6,14 @@ Created on Sun Mar 10 10:52:22 2024
 """
 #This is for testing of filters and basic image processing
 
+import os
 import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-load = cv2.imread('testImages/test2.png')
-loadcopy = cv2.imread('testImages/test2.png')
+load = cv2.imread('testImages/test4.jpg')
+loadcopy = cv2.imread('testImages/test4.jpg')
 
 down_width = 720
 down_height = 720
@@ -55,6 +56,8 @@ for i in range(down_width):
     row_index = i
     row_sum.append(np.sum(offset[row_index,:]))
     i+=1
+print(row_sum)
+print(max(row_sum))
 bhline_index =row_sum.index(max(row_sum))
 
 loopline_index=bhline_index
@@ -74,6 +77,8 @@ b = hline_index  # nz[:,0,1].min()
 c = vline_index #nz[:,0,0].max()
 d = bhline_index
 
+#print(b,d,c,a)
+
 offset[b,a:c] =128
 offset[b:d,a] =128
 offset[b:d,c] =128
@@ -82,10 +87,36 @@ cv2.imshow('Offset', offset)
 cv2.waitKey()
 
 imagecopy[b,a:c] =(0,255,0)
+imagecopy[d,a:c] =(0,255,0)
 imagecopy[b:d,a] =(0,255,0)
 imagecopy[b:d,c] =(0,255,0)
-imagecopy[d,a:c] =(0,255,0)
 
 cv2.imshow('Image',imagecopy)
 cv2.waitKey()
 
+graph = imagecopy[b-3:d+3,a-3:c+3]
+graphcopy = imagecopy[b-3:d+3,a-3:c+3]
+ 
+# Display cropped image
+cv2.imshow("Cropped", graph)
+cv2.waitKey()
+
+# Save the cropped image
+#cv2.imwrite("testImages/Cropped Image.jpg", cropped_image)
+
+graygraph= cv2.cvtColor(graph, cv2.COLOR_BGR2GRAY)
+graygraphcopy = cv2.cvtColor(graphcopy,cv2.COLOR_BGR2GRAY)
+graygraph = np.float32(graygraph)
+
+dst = cv2.cornerHarris(graygraph,2,3,0.05)
+# Threshold for an optimal value, it may vary depending on the image.
+graygraph[dst>0.06*dst.max()]=255
+
+corneronly = graygraph-graygraphcopy
+
+cv2.imshow('Corneronly', corneronly)
+cv2.waitKey()
+
+corneronly[:-9,9:]=0
+cv2.imshow('Axesonly',corneronly)
+cv2.waitKey()
