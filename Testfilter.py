@@ -12,8 +12,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-load = cv2.imread('testImages/test4.jpg')
-loadcopy = cv2.imread('testImages/test4.jpg')
+load = cv2.imread('testImages/test2.png')
+loadcopy = cv2.imread('testImages/test2.png')
 
 down_width = 720
 down_height = 720
@@ -109,14 +109,16 @@ graygraphcopy = cv2.cvtColor(graphcopy,cv2.COLOR_BGR2GRAY)
 graygraph = np.float32(graygraph)
 
 dst = cv2.cornerHarris(graygraph,2,3,0.05)
+# Look into Shi-Tomasi corner detection
 # Threshold for an optimal value, it may vary depending on the image.
 graygraph[dst>0.06*dst.max()]=255
 
 corneronly = graygraph-graygraphcopy
 
+corneronly[:-9,9:]=0
 cv2.imshow('Corneronly', corneronly)
 cv2.waitKey()
-
-corneronly[:-9,9:]=0
-cv2.imshow('Axesonly',corneronly)
+kernel = np.ones((2,2),np.float32)/4
+dst = cv2.filter2D(corneronly,-1,kernel)
+cv2.imshow('Corneronly',dst)
 cv2.waitKey()
