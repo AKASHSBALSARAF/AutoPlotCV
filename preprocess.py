@@ -4,7 +4,8 @@ Created on Sun Mar 10 10:52:22 2024
 
 @author: Pratham Gupta
 """
-#This is for testing of filters and basic image processing
+#program to function to detect the axes of the graph and
+#remove the plot area from the axes for doing OCR.
 
 import cv2 
 import numpy as np
@@ -26,16 +27,12 @@ def detectAxis(load):
     image[dst>0.012*dst.max()]=[255,255,255]
 
     offset = cv2.cvtColor(image-imagecopy, cv2.COLOR_BGR2GRAY)
-    '''cv2.imshow('Offset',offset)
-    cv2.waitKey()'''
 
     column_sum=[]
     for i in range(down_height):
         column_index = i
         column_sum.append(np.sum(offset[:, column_index]))
         i+=1
-    print(column_sum)
-    print(max(column_sum))
     lvline_index =column_sum.index(max(column_sum))
 
     loopline2_index=lvline_index
@@ -54,8 +51,7 @@ def detectAxis(load):
         row_index = i
         row_sum.append(np.sum(offset[row_index,:]))
         i+=1
-    print(row_sum)
-    print(max(row_sum))
+        
     bhline_index =row_sum.index(max(row_sum))
 
     loopline_index=bhline_index
@@ -69,60 +65,23 @@ def detectAxis(load):
     else:
         hline_index=rowtestline_index+1
 
-
     a = lvline_index
     b = hline_index  # nz[:,0,1].min()
     c = vline_index #nz[:,0,0].max()
     d = bhline_index
 
-    #print(b,d,c,a)
-
     offset[b,a:c] =128
     offset[b:d,a] =128
     offset[b:d,c] =128
     offset[d,a:c] =128
-    # cv2.imshow('Offset', offset)
-    # cv2.waitKey()
 
     imagecopy[b,a:c] =(0,255,0)
     imagecopy[d,a:c] =(0,255,0)
     imagecopy[b:d,a] =(0,255,0)
     imagecopy[b:d,c] =(0,255,0)
 
-    # cv2.imshow('Image',imagecopy)
-    # cv2.waitKey()
-
     graph = imagecopy[b:d,a:c]
     nongraph = imagecopy
     nongraph[b:d,a:c] = 255
 
-    '''graphcopy = imagecopy[b-3:d+3,a-3:c+3]
-    
-    # Display cropped image
-    # cv2.imshow("Cropped", graph)
-    # cv2.waitKey()
-
-    # Save the cropped image
-    #cv2.imwrite("testImages/Cropped Image.jpg", cropped_image)
-
-    graygraph= cv2.cvtColor(graph, cv2.COLOR_BGR2GRAY)
-    graygraphcopy = cv2.cvtColor(graphcopy,cv2.COLOR_BGR2GRAY)
-    graygraph = np.float32(graygraph)
-
-    dst = cv2.cornerHarris(graygraph,2,3,0.05)
-    # Look into Shi-Tomasi corner detection
-    # Threshold for an optimal value, it may vary depending on the image.
-    graygraph[dst>0.06*dst.max()]=255
-
-    corneronly = graygraph-graygraphcopy
-
-    corneronly[:-9,9:]=0
-    cv2.imshow('Corneronly', corneronly)
-    cv2.waitKey()
-    kernel = np.ones((2,2),np.float32)/4
-    dst = cv2.filter2D(corneronly,-1,kernel)
-    cv2.imshow('Corneronly',dst)
-    cv2.waitKey() '''
-    return(nongraph)
-
-
+    return [graph,nongraph]
