@@ -83,6 +83,9 @@ def detectAxesAndLengthScales(load):
     graph = imagecopy[b:d,a:c]
     nongraph = imagecopy
     nongraph[b:d,a:c] = 255
+    #return[graph,nongraph,b,d,a,c]
+    #The code upto here detects and makes a bounding box around the main graph area,
+    #returns back the indices of the lines (the x and y axis coordinates), and returns back the graph and nongraph area
     graphcopy = graph
 
     # Display cropped image
@@ -183,4 +186,5 @@ def detectAxesAndLengthScales(load):
     diff = diff[np.where(diff>5)]
     lengthscalex = np.ceil(np.mean(diff))
     
-    return(graph,nongraph,a,b,c,d,lengthscaley,lengthscalex)
+    return(graph,nongraph,b,d,a,c,lengthscaley,lengthscalex)
+    #lengthscalex and lengthscaley are the calculated mean differences on the axes, a measure for the distance between two points
