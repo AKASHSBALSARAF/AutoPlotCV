@@ -70,17 +70,17 @@ def detectAxesAndLengthScales(load):
     c = vline_index #nz[:,0,0].max()
     d = bhline_index
 
-    offset[b,a:c] =128
+    offset[b,c:a] =128
     offset[b:d,a] =128
     offset[b:d,c] =128
-    offset[d,a:c] =128
+    offset[d,c:a] =128
 
-    imagecopy[b,a:c] =(0,255,0)
-    imagecopy[d,a:c] =(0,255,0)
+    imagecopy[b,c:a] =(0,255,0)
+    imagecopy[d,c:a] =(0,255,0)
     imagecopy[b:d,a] =(0,255,0)
     imagecopy[b:d,c] =(0,255,0)
 
-    graph = imagecopy[b:d,a:c]
+    graph = imagecopy[b-3:d+3,c-3:a+3]
     nongraph = imagecopy
     nongraph[b:d,a:c] = 255
     #return[graph,nongraph,b,d,a,c]
