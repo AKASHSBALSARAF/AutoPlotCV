@@ -9,7 +9,7 @@ Created on Sun Mar 10 10:52:22 2024
 import cv2 
 import numpy as np
 
-loadcopy = load = cv2.imread('testImages/loglog.png')
+loadcopy = load = cv2.imread('testImages/test3.png')
 
 down_width = 720
 down_height = 720
@@ -24,8 +24,8 @@ dst = cv2.Canny(gray,400,500)
 image[dst>0.012*dst.max()]=[255,255,255]
 
 offset = cv2.cvtColor(image-imagecopy, cv2.COLOR_BGR2GRAY)
-cv2.imshow('Offset',offset)
-cv2.waitKey()
+# cv2.imshow('Offset',offset)
+# cv2.waitKey()
 
 column_sum=[]
 for i in range(down_height):
@@ -79,8 +79,6 @@ if c>a:
     c = a
     a = switch
 
-print(b,d,c,a)
-
 offset[b,c:a] =128
 offset[b:d,a] =128
 offset[b:d,c] =128
@@ -93,13 +91,15 @@ imagecopy[d,c:a] =(0,255,0)
 imagecopy[b:d,a] =(0,255,0)
 imagecopy[b:d,c] =(0,255,0)
 
-cv2.imshow('Image',imagecopy)
-cv2.waitKey()
+# cv2.imshow('Image',imagecopy)
+# cv2.waitKey()
 
-print(b,d,c,a)
 graph = imagecopy[(b-3):(d+3),(c-3):(a+3)]
+# cv2.imshow("Cropped", graph)
+# cv2.waitKey()
+
 nongraph = imagecopy
-nongraph[b:d,c:a] = 255
+nongraph[b-3:d-3,c+3:a+3] = 255
 graphcopy = graph
 
 # Display cropped image
@@ -156,7 +156,13 @@ for i in range(1, len(filtered_array)):
     difference = filtered_array[i][0] - filtered_array[i - 1][0]
     differences.append(difference)
 print(differences)
+
+def positive(arr):
+    return[x for x in arr if x>5]
+differences=positive(differences)
+
 lengthscaley = np.ceil(np.mean(differences))
+print(lengthscaley)
 
 for i in range(var2-1):
     for j in range(var1-1):
@@ -182,21 +188,14 @@ maximum = max_occurrence_elements[0]
 filtered_array = [tup for tup in indexlowhigh if tup[0] == maximum]
 print(filtered_array)
 
-# differences = []
-# for i in range(1, len(filtered_array)):
-#     difference = filtered_array[i][1] - filtered_array[i - 1][1]
-#     differences.append(difference)
-# print(differences)
-# for i in range(len(differences)):
-#     if differences[i-1] < 10:
-#         differences.pop(i-1)
-# print(differences)
-# lengthscale2 = np.ceil(np.mean(differences))
-# print(lengthscale2)
+differences = []
+for i in range(1, len(filtered_array)):
+    difference = filtered_array[i][1] - filtered_array[i - 1][1]
+    differences.append(difference)
+print(differences)
 
-i = np.arange(1,len(filtered_array))
-filtered_array=np.array(filtered_array)
-diff = filtered_array[i]-filtered_array[i-1]
-diff = diff[np.where(diff>5)]
-lengthscalex = np.ceil(np.mean(diff))
+differences=positive(differences)
+lengthscalex = np.ceil(np.mean(differences))
+print(lengthscalex)
+
 
