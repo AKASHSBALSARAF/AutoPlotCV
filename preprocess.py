@@ -11,7 +11,6 @@ import cv2
 import numpy as np
 
 def detectAxesAndLengthScales(load):
-
     loadcopy = load
 
     down_width = 720
@@ -92,7 +91,7 @@ def detectAxesAndLengthScales(load):
 
     graph = imagecopy[b-3:d+3,c-3:a+3]
     nongraph = imagecopy
-    nongraph[b:d,a:c] = 255
+    nongraph[b-3:d-3,c+3:a+3] = 255
     #return[graph,nongraph,b,d,a,c]
     #The code upto here detects and makes a bounding box around the main graph area,
     #returns back the indices of the lines (the x and y axis coordinates), and returns back the graph and nongraph area
@@ -152,25 +151,30 @@ def detectAxesAndLengthScales(load):
      difference = filtered_array[i][0] - filtered_array[i - 1][0]
      differences.append(difference)
     print(differences)
+    
+    def positive(arr):
+        return[x for x in arr if x>5]
+    differences=positive(differences)
+    
     lengthscaley = np.ceil(np.mean(differences))
-
+    
     for i in range(var2-1):
-     for j in range(var1-1):
-        if corneronly[j,i] > 128:
-            if corneronly[j,i+1] < 128:
-                indexhighlow.append((j,i))
-        elif corneronly[j,i] < 128:
-            if corneronly[j,i+1] > 128:
-                indexlowhigh.append((j,i+1))
+        for j in range(var1-1):
+            if corneronly[j,i] > 128:
+                if corneronly[j,i+1] < 128:
+                    indexhighlow.append((j,i))
+            elif corneronly[j,i] < 128:
+                if corneronly[j,i+1] > 128:
+                    indexlowhigh.append((j,i+1))
 
     first_element_count = {}
 
     for tup in indexlowhigh:
-     first_element = tup[0]
-     if first_element in first_element_count:
-        first_element_count[first_element] += 1
-     else:
-        first_element_count[first_element] = 1
+        first_element = tup[0]
+        if first_element in first_element_count:
+            first_element_count[first_element] += 1
+        else:
+            first_element_count[first_element] = 1
 
     max_occurrence = max(first_element_count.values())
     max_occurrence_elements = [k for k, v in first_element_count.items() if v == max_occurrence]
@@ -178,23 +182,14 @@ def detectAxesAndLengthScales(load):
     filtered_array = [tup for tup in indexlowhigh if tup[0] == maximum]
     print(filtered_array)
 
-    # differences = []
-    # for i in range(1, len(filtered_array)):
-    #     difference = filtered_array[i][1] - filtered_array[i - 1][1]
-    #     differences.append(difference)
-    # print(differences)
-    # for i in range(len(differences)):
-    #     if differences[i-1] < 10:
-    #         differences.pop(i-1)
-    # print(differences)
-    # lengthscale2 = np.ceil(np.mean(differences))
-    # print(lengthscale2)
+    differences = []
+    for i in range(1, len(filtered_array)):
+        difference = filtered_array[i][1] - filtered_array[i - 1][1]
+        differences.append(difference)
+    print(differences)
 
-    i = np.arange(1,len(filtered_array))
-    filtered_array=np.array(filtered_array)
-    diff = filtered_array[i]-filtered_array[i-1]
-    diff = diff[np.where(diff>5)]
-    lengthscalex = np.ceil(np.mean(diff))
-    
-    return(graph,nongraph,b,d,a,c,lengthscaley,lengthscalex)
+    differences=positive(differences)
+    lengthscalex = np.ceil(np.mean(differences))
+        
+    return(graph,nongraph,b,d,c,a,lengthscaley,lengthscalex)
     #lengthscalex and lengthscaley are the calculated mean differences on the axes, a measure for the distance between two points
