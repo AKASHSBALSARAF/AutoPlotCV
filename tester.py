@@ -69,6 +69,16 @@ b = hline_index
 c = vline_index 
 d = bhline_index
 
+if b>d:
+    switch = b
+    b = d
+    d = switch
+
+if c>a:
+    switch = c
+    c = a
+    a = switch
+
 print(b,d,c,a)
 
 offset[b,c:a] =128

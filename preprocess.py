@@ -70,6 +70,16 @@ def detectAxesAndLengthScales(load):
     c = vline_index #nz[:,0,0].max()
     d = bhline_index
 
+    if b>d:
+        switch = b
+        b = d
+        d = switch
+
+    if c>a:
+        switch = c
+        c = a
+        a = switch
+    
     offset[b,c:a] =128
     offset[b:d,a] =128
     offset[b:d,c] =128
