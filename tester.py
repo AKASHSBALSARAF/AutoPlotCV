@@ -9,7 +9,7 @@ Created on Sun Mar 10 10:52:22 2024
 import cv2 
 import numpy as np
 
-loadcopy = load = cv2.imread('testImages/test3.png')
+loadcopy = load = cv2.imread('testImages/test4.jpg')
 
 down_width = 720
 down_height = 720
@@ -91,20 +91,20 @@ imagecopy[d,c:a] =(0,255,0)
 imagecopy[b:d,a] =(0,255,0)
 imagecopy[b:d,c] =(0,255,0)
 
-# cv2.imshow('Image',imagecopy)
-# cv2.waitKey()
+cv2.imshow('Image',imagecopy)
+cv2.waitKey()
 
 graph = imagecopy[(b-3):(d+3),(c-3):(a+3)]
-# cv2.imshow("Cropped", graph)
-# cv2.waitKey()
+cv2.imshow("Cropped", graph)
+cv2.waitKey()
 
 nongraph = imagecopy
-nongraph[b-3:d-3,c+3:a+3] = 255
+nongraph[b-3:d-3,c+5:a+5] = 255
 graphcopy = graph
 
 # Display cropped image
-# cv2.imshow("Cropped", graph)
-# cv2.waitKey()
+cv2.imshow("Cropped", graph)
+cv2.waitKey()
 
 # Save the cropped image
 #cv2.imwrite("testImages/Cropped Image.jpg", cropped_image)

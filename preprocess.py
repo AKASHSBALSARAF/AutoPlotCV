@@ -11,7 +11,6 @@ import cv2
 import numpy as np
 
 def detectAxesAndLengthScales(load):
-
     loadcopy = load
 
     down_width = 720
@@ -92,7 +91,7 @@ def detectAxesAndLengthScales(load):
 
     graph = imagecopy[b-3:d+3,c-3:a+3]
     nongraph = imagecopy
-    nongraph[b-3:d-3,c+3:a+3] = 255
+    nongraph[b-3:d-3,c+6:a+6] = 255
     #return[graph,nongraph,b,d,a,c]
     #The code upto here detects and makes a bounding box around the main graph area,
     #returns back the indices of the lines (the x and y axis coordinates), and returns back the graph and nongraph area
