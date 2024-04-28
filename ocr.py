@@ -3,7 +3,7 @@ import numpy as np
 import statistics as st
 import pytesseract
 from pytesseract import Output
-from preprocess import detectAxesAndLengthScales as le 
+from axisANDcorner import detectAxesAndLengthScales as le 
 import warnings
 
 #ignores warnings
